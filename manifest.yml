@@ -1,0 +1,8 @@
+---
+applications:
+- name: cf-maven-config-client
+  path: target\config-client-application-0.0.1-SNAPSHOT.jar
+  memory: 1G
+  instances: 1
+  services:
+  - config-server

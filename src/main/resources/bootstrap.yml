@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      uri: ${vcap.services.config-server.credentials.uri:http://localhost:8888}
+      client:
+        oauth2:
+          client-id: ${vcap.services.config-server.credentials.client_id}
+          client-secret: ${vcap.services.config-server.credentials.client_secret}
+          access-token-uri: ${vcap.services.config-server.credentials.access_token_uri}
