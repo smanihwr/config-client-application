@@ -15,6 +15,7 @@
  */
 package com.example.configclient.Configuration;
 
+import com.example.configclient.RequestResponseLoggingInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,9 +24,12 @@ import org.springframework.cloud.config.client.ConfigServicePropertySourceLocato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 
 @Configuration
 @EnableConfigurationProperties(ConfigClientOAuth2ResourceDetails.class)
@@ -62,7 +66,10 @@ public class ConfigClientOAuth2BootstrapConfiguration {
 
         @PostConstruct
         public void init() {
-            this.locator.setRestTemplate(new OAuth2RestTemplate(this.configClientOAuth2ResourceDetails.getOauth2()));
+            OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(this.configClientOAuth2ResourceDetails.getOauth2());
+            restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+            restTemplate.setInterceptors( Collections.singletonList(new RequestResponseLoggingInterceptor()) );
+            this.locator.setRestTemplate(restTemplate);
         }
 
     }
